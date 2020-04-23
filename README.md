@@ -3,6 +3,7 @@
 [flink-project.g8](https://github.com/tillrohrmann/flink-project.g8)
 
 Using flink 1.7.2 to maintain compatibility with [Stream Processing with Apache Flink](http://shop.oreilly.com/product/0636920057321.do)
+Code for book [here](https://github.com/streaming-with-flink/examples-scala)
 
 Project initialization command:
 ```
