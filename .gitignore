@@ -6,3 +6,12 @@
 
 # ignore OSX 'folder' metadata
 .DS_Store
+
+# Intellij
+*.iml
+*.ipr
+*.iws
+.idea
+out
+
+
