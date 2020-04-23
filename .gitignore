@@ -1,3 +1,5 @@
+# scala/sbt
+target
 *.class
 *.log
 
