@@ -15,10 +15,19 @@ object AverageSensorReadings {
   // main() defines and executes the DataStream program
   def main(args: Array[String]) {
 
-    // set up the streaming execution environment
+    /** set up the streaming execution environment
+     * determines whether the program is running on a local machine or a cluster
+     * may also explicitly pick local or remote
+     * val localEnv: StreamExecutionEnviornment.createLocalEnvironment()
+     * val remoteEnv = StreamExecutionEnvironment.createRemoteEnvironment(
+     *  "host",                  // hostname of JobManager
+     *  1234,                    // port of JobManager
+     *  "/path/to/jarFile.jar")  // JAR file to ship to the JobManager
+     **/
     val env = StreamExecutionEnvironment.getExecutionEnvironment
 
-    //use event time for the application
+    // use event time for the application
+    // can also set parallelism and fault tolerance
     env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
 
     // create a DataStream from a stream source
@@ -28,6 +37,11 @@ object AverageSensorReadings {
       // assign timestamps and watermarks (required for event time)
       .assignTimestampsAndWatermarks(new SensorTimeAssigner)
 
+    /** apply transformations
+     *  transformations may change the data type
+     *  here the data type is the same SensorReading
+     *  the logic of an application is defined by chaining transformations
+     */
     val avgTemp: DataStream[SensorReading] = sensorData
       // convert Fahrenheit to Celsius with an inline lambda function
       .map( r => {
@@ -41,10 +55,24 @@ object AverageSensorReadings {
       // compute average teperature using a user-defined function
       .apply(new TemperatureAverager)
 
-    // print result stream to standard out
+    /* print result stream to standard out
+     * This is where you would output to a sink like
+     * Kafka, filesystem, database
+     * or write your own
+     * some applications output nothing but just maintain queryable state
+     *
+     * the choice of streaming sink affects the end-to-end consistency of an application
+     * whether it can be at-least-once or exactly-once.
+     * capability dependes on integration with Flink checkpointing
+     * see "Application Consistancy Guarantees" on page 184
+     */
     avgTemp.print()
 
-    // execute application
+    /* execute application
+     * flink programs are executed lazily
+     * the code above contructs an execution plan
+     * the plan is translated into a JobGraph and submitted to a JobManager
+     */
     env.execute("Compute average sensor temperature")
   }
 }
