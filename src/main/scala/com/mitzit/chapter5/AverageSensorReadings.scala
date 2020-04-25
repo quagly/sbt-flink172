@@ -2,6 +2,8 @@ package com.mitzit.chapter5
 
 import com.mitzit.util.{SensorReading, SensorSource, SensorTimeAssigner}
 
+// does flink require lazylogging?
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.streaming.api.scala.function.WindowFunction
@@ -10,7 +12,7 @@ import org.apache.flink.streaming.api.windowing.windows.TimeWindow
 import org.apache.flink.util.Collector
 
 // Scala object that defined the DataStream program in the main() method
-object AverageSensorReadings {
+object AverageSensorReadings{
 
   // main() defines and executes the DataStream program
   def main(args: Array[String]) {
@@ -68,6 +70,7 @@ object AverageSensorReadings {
      */
     avgTemp.print()
 
+
     /* execute application
      * flink programs are executed lazily
      * the code above contructs an execution plan
@@ -78,7 +81,7 @@ object AverageSensorReadings {
 }
 
 /** User-defined WindowFunction to compute the average temperature of SensorReadings */
-class TemperatureAverager extends WindowFunction[SensorReading, SensorReading, String, TimeWindow] {
+class TemperatureAverager extends WindowFunction[SensorReading, SensorReading, String, TimeWindow] with LazyLogging{
 
   /** apply() is invoked once for each window */
   override def apply(
@@ -90,6 +93,10 @@ class TemperatureAverager extends WindowFunction[SensorReading, SensorReading, S
     // compute the average temperature
     val (cnt, sum) = vals.foldLeft((0, 0.0))((c, r) => (c._1 + 1, c._2 + r.temperature))
     val avgTemp = sum / cnt
+    // logging example
+    // is it better to write to a sink then use logging?
+    // how does this work with parallelism?
+    logger.info(s"average temperature is: ${avgTemp}")
 
     // emit a SensorReading with the average temperature
     out.collect(SensorReading(sensorId, window.getEnd, avgTemp))

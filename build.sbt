@@ -11,15 +11,30 @@ organization := "com.mitzit"
 
 ThisBuild / scalaVersion := "2.11.12"
 
-val flinkVersion = "1.7.2"
+lazy val flinkVersion = "1.7.2"
+lazy val scalatestVersion = "3.1.1"
+lazy val scalaLoggingVersion = "3.9.2"
+lazy val logbackClassicVersion= "1.2.3"
 
 val flinkDependencies = Seq(
   "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
-  "org.apache.flink" %% "flink-streaming-scala" % flinkVersion % "provided")
+  "org.apache.flink" %% "flink-streaming-scala" % flinkVersion % "provided"
+)
+
+val loggingDependencies = Seq(
+  "com.typesafe.scala-logging" %% "scala-logging" % scalaLoggingVersion,
+  "ch.qos.logback" % "logback-classic" % logbackClassicVersion
+)
+
+val testDependencies = Seq(
+  "org.scalatest" %% "scalatest" % scalatestVersion % "test"
+)
 
 lazy val root = (project in file(".")).
   settings(
-    libraryDependencies ++= flinkDependencies
+    libraryDependencies ++= flinkDependencies,
+    libraryDependencies ++= loggingDependencies,
+    libraryDependencies ++= testDependencies
   )
 
 assembly / mainClass := Some("com.mitzit.Job")
