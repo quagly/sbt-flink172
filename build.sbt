@@ -27,7 +27,8 @@ val loggingDependencies = Seq(
 )
 
 val testDependencies = Seq(
-  "org.scalatest" %% "scalatest" % scalatestVersion % "test"
+  "org.scalatest" %% "scalatest" % scalatestVersion % "test",
+  "org.apache.flink" %% "flink-test-utils" % flinkVersion % "test"
 )
 
 lazy val root = (project in file(".")).
