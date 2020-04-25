@@ -9,7 +9,7 @@ version := "0.1"
 
 organization := "com.mitzit"
 
-ThisBuild / scalaVersion := "2.11.12"
+ThisBuild / scalaVersion := "2.12.11"
 
 lazy val flinkVersion = "1.7.2"
 lazy val scalatestVersion = "3.1.1"
